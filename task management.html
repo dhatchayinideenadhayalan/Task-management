@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Smart Task Manager</title>
+
+<style>
+
+body{
+font-family:Arial;
+margin:0;
+background-image:url("https://images.unsplash.com/photo-1492724441997-5dc865305da7");
+background-size:cover;
+background-position:center;
+}
+
+header{
+text-align:center;
+color:white;
+padding:20px;
+background:rgba(0,0,0,0.6);
+}
+
+.container{
+width:90%;
+max-width:900px;
+margin:30px auto;
+background:rgba(255,255,255,0.95);
+padding:20px;
+border-radius:12px;
+}
+
+input{
+padding:8px;
+margin:5px;
+border-radius:5px;
+border:1px solid #ccc;
+}
+
+button{
+padding:7px 12px;
+border:none;
+border-radius:5px;
+cursor:pointer;
+margin:2px;
+}
+
+.add{
+background:#16a34a;
+color:white;
+}
+
+.edit{
+background:#f59e0b;
+color:white;
+}
+
+.delete{
+background:#dc2626;
+color:white;
+}
+
+.complete{
+background:#2563eb;
+color:white;
+}
+
+table{
+width:100%;
+margin-top:20px;
+border-collapse:collapse;
+}
+
+th,td{
+border:1px solid #ddd;
+padding:10px;
+text-align:center;
+}
+
+th{
+background:#1e293b;
+color:white;
+}
+
+.status-green{
+color:green;
+font-weight:bold;
+}
+
+.status-orange{
+color:orange;
+font-weight:bold;
+}
+
+.status-red{
+color:red;
+font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+<h1>Smart Task Manager</h1>
+<p>Edit deadline and manage tasks easily</p>
+</header>
+
+<div class="container">
+
+<input type="text" id="task" placeholder="Task Name">
+<input type="date" id="deadline">
+<input type="text" id="place" placeholder="Location">
+
+<button class="add" onclick="addTask()">Add Task</button>
+
+<table id="taskTable">
+
+<tr>
+<th>Task</th>
+<th>Deadline</th>
+<th>Place</th>
+<th>Status</th>
+<th>Actions</th>
+</tr>
+
+</table>
+
+</div>
+
+<script>
+
+function getStatus(deadline){
+
+let today=new Date();
+let due=new Date(deadline);
+
+let diff=(due-today)/(1000*60*60*24);
+
+if(diff>3){
+return "<span class='status-green'>On Track</span>";
+}
+else if(diff>=0){
+return "<span class='status-orange'>Hurry Up</span>";
+}
+else{
+return "<span class='status-red'>Overdue</span>";
+}
+
+}
+
+function addTask(){
+
+let task=document.getElementById("task").value;
+let deadline=document.getElementById("deadline").value;
+let place=document.getElementById("place").value;
+
+if(task===""){
+alert("Enter task");
+return;
+}
+
+let status=getStatus(deadline);
+
+let table=document.getElementById("taskTable");
+let row=table.insertRow();
+
+row.insertCell(0).innerText=task;
+row.insertCell(1).innerText=deadline;
+row.insertCell(2).innerText=place;
+row.insertCell(3).innerHTML=status;
+
+let action=row.insertCell(4);
+
+let editBtn=document.createElement("button");
+editBtn.innerText="Edit";
+editBtn.className="edit";
+
+editBtn.onclick=function(){
+
+let newDeadline=prompt("Enter new deadline (YYYY-MM-DD)",row.cells[1].innerText);
+
+if(newDeadline){
+row.cells[1].innerText=newDeadline;
+row.cells[3].innerHTML=getStatus(newDeadline);
+}
+
+}
+
+let completeBtn=document.createElement("button");
+completeBtn.innerText="Complete";
+completeBtn.className="complete";
+
+completeBtn.onclick=function(){
+row.style.textDecoration="line-through";
+}
+
+let deleteBtn=document.createElement("button");
+deleteBtn.innerText="Delete";
+deleteBtn.className="delete";
+
+deleteBtn.onclick=function(){
+row.remove();
+}
+
+action.appendChild(editBtn);
+action.appendChild(completeBtn);
+action.appendChild(deleteBtn);
+
+document.getElementById("task").value="";
+document.getElementById("deadline").value="";
+document.getElementById("place").value="";
+
+}
+
+</script>
+
+</body>
+</html>
